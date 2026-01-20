@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title id="title-el"
+  data-en="VideoMatting · Video Background Remover"
+  data-zh="视频抠图 · AI 视频抠像换背景">VideoMatting · Video Background Remover</title>
+
+<meta name="description" id="meta-desc"
+  data-en="VideoMatting removes video backgrounds with high-precision AI matting. Export green screen, replace with solid colors or photos, and process in 720p/1080p/2K with smart orientation models."
+  data-zh="视频抠图（VideoMatting）提供高精度 AI 视频抠像与换背景。支持绿幕导出、纯色/图片背景替换，并支持 720p/1080p/2K 处理与横竖屏智能模型适配。"
+  content="VideoMatting removes video backgrounds with high-precision AI matting. Export green screen, replace with solid colors or photos, and process in 720p/1080p/2K with smart orientation models.">
+
+<link rel="icon" href="videomatting_128.png">
+
+<style>
+:root{
+  /* VideoMatting 深色主题 */
+  --bg:#050712; 
+  --surface:#111525; 
+  --text:#F5F7FF; 
+  --text2:#B9C3DA;
+
+  --accent:#6EE7FF;
+  --accent2:#4F8CFF;
+
+  --chip:#1B2238; 
+  --chip2:#1A2036;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, 
+  Noto Sans, "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+}
+a{color:var(--accent);text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:40px 24px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700}
+.brand img.icon{width:40px;height:40px;border-radius:12px}
+.lang-switch{display:flex;gap:8px;background:var(--surface);border-radius:12px;padding:6px}
+.lang-switch button{all:unset;cursor:pointer;padding:6px 14px;border-radius:10px;color:var(--text2);font-weight:600}
+.lang-switch button.active{background:var(--accent);color:#0B1220}
+.nav-links{display:flex;gap:18px;align-items:center}
+.nav-links a{color:var(--text2);font-weight:600}
+.nav-links a:hover{color:var(--text)}
+
+.hero{display:grid;grid-template-columns:1.1fr 0.9fr;gap:36px;align-items:center;margin-top:40px}
+.hero h1{font-size:40px;line-height:1.1;margin:0 0 16px}
+.hero p.lead{color:var(--text2);font-size:18px;margin:0 0 24px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.button{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(180deg,var(--accent),var(--accent2));
+  color:#0B1220;font-weight:700;padding:14px 22px;border-radius:14px;
+  box-shadow:0 10px 30px rgba(79,140,255,.25);
+} 
+.button.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.15)}
+.card{background:var(--surface);border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.25);} 
+.section{margin-top:80px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.tag{
+  display:inline-block;padding:6px 10px;border-radius:8px;font-size:13px;
+  background:rgba(110,231,255,.16);color:#CFF8FF
+}
+.sample{width:100%;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.35);background:#0f1118;aspect-ratio:9/19.5;object-fit:cover}
+.footer{margin-top:80px;color:var(--text2);font-size:14px;border-top:1px solid rgba(255,255,255,.08);padding:32px 0}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.gallery img{
+  width:100%;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.35);
+  background:#0f1118;aspect-ratio:9/19.5;object-fit:cover
+}
+/* 竖屏图比例 */
+.gallery img.portrait { aspect-ratio: 9 / 19.5; }
+/* 横屏图比例 (iPad & 平板横屏) */
+.gallery img.landscape { aspect-ratio: 16 / 10; }
+@media (max-width:960px){ .hero{grid-template-columns:1fr} }
+
+/* 英雄区：VideoMatting UI 示意卡片 */
+.pn-card{border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.35);background:#0F1528}
+.pn-top{
+  padding:22px 22px 10px;color:#CFF8FF;font-weight:800;letter-spacing:.04em
+}
+.pn-body{
+  background:
+    radial-gradient(circle at 10% 0%,rgba(110,231,255,.35),rgba(110,231,255,0) 55%),
+    linear-gradient(180deg,#151A33,#070B18);
+  padding:22px
+}
+.pn-row{display:flex;align-items:center;gap:10px;margin:10px 0}
+.pn-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle at 30% 0%,#B9F6FF,#4F8CFF);
+  opacity:.9
+}
+.pn-line{
+  height:10px;border-radius:6px;background:rgba(255,255,255,.10);flex:1
+}
+.pn-line.bold{height:14px;background:rgba(255,255,255,.16);width:70%}
+.pn-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.06);
+  color:var(--text2);font-size:12px;font-weight:600
+}
+.pn-dots{display:flex;gap:6px}
+.pn-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.pn-bar{background:#0B0F1E;color:#E6F7FF;text-align:center;padding:12px;font-weight:700}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <nav>
+    <div class="brand">
+      <!-- 替换为 VideoMatting 图标 -->
+      <img class="icon" src="videomatting_128.png" alt="VideoMatting icon">
+      <span>
+        <span data-en="VideoMatting" data-zh="视频抠图"></span> ·
+        <span data-en="Video Background Remover" data-zh="AI 视频抠像换背景"></span>
+      </span>
+    </div>
+
+    <div class="nav-links">
+      <a href="#privacy" data-en="Privacy" data-zh="隐私"></a>
+      <a href="#support" data-en="Support" data-zh="支持"></a>
+    </div>
+
+    <div class="lang-switch">
+      <button id="btn-en" class="active">English</button>
+      <button id="btn-zh">中文</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <h1
+        data-en="Cut out people in video. Replace backgrounds instantly."
+        data-zh="视频人像一键抠出，背景随心替换"></h1>
+
+      <p class="lead"
+         data-en="VideoMatting delivers high-precision AI portrait matting for video. Export green screen, swap to any solid color, or use a photo background. Process in 720p/1080p/2K with smart landscape/portrait models."
+         data-zh="视频抠图（VideoMatting）提供高精度 AI 视频抠像。可导出标准绿幕，替换任意纯色或相册图片背景；支持 720p/1080p/2K 多分辨率处理，并自动适配横竖屏专用模型，效果更稳。"></p>
+
+      <div class="cta">
+        <a href="#" class="button" data-en="Download on the App Store" data-zh="在 App Store 下载"></a>
+        <a href="#features" class="button ghost" data-en="See how it works" data-zh="了解功能"></a>
+      </div>
+
+      <div style="margin-top:24px;color:var(--text2)">
+        <span>• </span>
+        <span
+          data-en="AI matting · Green screen · Solid color · Photo background · 720p–2K"
+          data-zh="AI 抠像 · 绿幕导出 · 纯色背景 · 图片背景 · 720p–2K"></span>
+      </div>
+    </div>
+
+    <div>
+      <!-- 英雄示意卡：VideoMatting UI -->
+      <div class="pn-card">
+        <div class="pn-top" data-en="VideoMatting · Processing" data-zh="视频抠图 · 正在处理"></div>
+        <div class="pn-body">
+          <div class="pn-row">
+            <div class="pn-avatar"></div>
+            <div class="pn-line bold"></div>
+          </div>
+
+          <div class="pn-row">
+            <span class="pn-chip">
+              <span data-en="Resolution: 1080p" data-zh="分辨率：1080p"></span>
+            </span>
+            <span class="pn-chip">
+              <span data-en="Model: Auto (Portrait)" data-zh="模型：自动（竖屏）"></span>
+            </span>
+          </div>
+
+          <div class="pn-row">
+            <div class="pn-line" style="width:92%"></div>
+          </div>
+
+          <div class="pn-row">
+            <span class="pn-chip">
+              <span data-en="Background: Green Screen" data-zh="背景：绿幕"></span>
+            </span>
+            <span class="pn-chip">
+              <span data-en="Export: H.264" data-zh="导出：H.264"></span>
+              <span class="pn-dots"><span class="pn-dot"></span><span class="pn-dot"></span></span>
+            </span>
+          </div>
+
+          <div class="pn-row">
+            <span class="pn-chip">
+              <span data-en="Solid Color / Photo" data-zh="纯色 / 图片背景"></span>
+            </span>
+            <span class="pn-chip">
+              <span data-en="High-precision edges" data-zh="边缘更自然"></span>
+            </span>
+          </div>
+        </div>
+
+        <div class="pn-bar"
+             data-en="Select video → Matting → Export"
+             data-zh="选视频 → 抠像 → 导出"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section">
+    <h2 data-en="Key features" data-zh="核心功能"></h2>
+    <div class="grid-3" style="margin-top:24px">
+
+      <!-- AI 抠图 -->
+      <div class="card">
+        <div class="tag" data-en="Matting" data-zh="抠像"></div>
+        <h3 style="margin:12px 0"
+            data-en="High-precision AI video matting"
+            data-zh="高精度 AI 视频抠图"></h3>
+        <p class="text2"
+           data-en="Accurately separate the person from the background with smooth edges for cleaner composites."
+           data-zh="精准分离人物与背景，边缘更自然，合成更干净。"></p>
+      </div>
+
+      <!-- 多分辨率 -->
+      <div class="card">
+        <div class="tag" data-en="Quality" data-zh="清晰度"></div>
+        <h3 style="margin:12px 0"
+            data-en="720p / 1080p / 2K support"
+            data-zh="720p / 1080p / 2K 支持"></h3>
+        <p class="text2"
+           data-en="Choose the best quality for your workflow. The app can recommend a model based on video quality."
+           data-zh="多档画质可选；支持根据视频质量自动推荐模型，也可手动强制选择。"></p>
+      </div>
+
+      <!-- 横竖屏适配 -->
+      <div class="card">
+        <div class="tag" data-en="Smart" data-zh="智能"></div>
+        <h3 style="margin:12px 0"
+            data-en="Smart landscape & portrait models"
+            data-zh="横竖屏智能模型适配"></h3>
+        <p class="text2"
+           data-en="Auto-detect orientation and load dedicated models for more stable results."
+           data-zh="自动识别源视频方向，匹配横屏/竖屏专用模型，效果更稳。"></p>
+      </div>
+
+      <!-- 绿幕 -->
+      <div class="card">
+        <div class="tag" data-en="Chroma" data-zh="绿幕"></div>
+        <h3 style="margin:12px 0"
+            data-en="Green screen export"
+            data-zh="标准绿幕导出"></h3>
+        <p class="text2"
+           data-en="Export a standard green screen video for easy chroma key in your editor."
+           data-zh="默认生成标准绿幕视频，便于在剪辑软件中二次合成。"></p>
+      </div>
+
+      <!-- 纯色背景 -->
+      <div class="card">
+        <div class="tag" data-en="Color" data-zh="纯色"></div>
+        <h3 style="margin:12px 0"
+            data-en="Any solid color background"
+            data-zh="任意纯色背景"></h3>
+        <p class="text2"
+           data-en="Pick any solid color instantly—perfect for clean presentations and templates."
+           data-zh="可选择任意纯色作为背景，快速做演示与模板素材。"></p>
+      </div>
+
+      <!-- 图片背景 -->
+      <div class="card">
+        <div class="tag" style="background:rgba(255,255,255,.12);color:#fff"
+             data-en="Photo" data-zh="图片"></div>
+        <h3 style="margin:12px 0"
+            data-en="Photo background with auto-fit"
+            data-zh="图片背景自动适配"></h3>
+        <p class="text2"
+           data-en="Import a photo from your library. We auto-crop and center it with Aspect Fill."
+           data-zh="从相册导入图片作为背景，自动居中裁剪适配（Aspect Fill）。"></p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 data-en="Screenshots" data-zh="界面预览"></h2>
+    <p class="lead"
+       data-en="Replace the images below with real screenshots from VideoMatting."
+       data-zh="将下方占位图替换为 VideoMatting 的真实截图。"></p>
+    <div class="gallery" style="margin-top:16px">
+      <img class="landscape" src="ss_en_1.png" data-en-src="ss_en_1.png" data-zh-src="ss_zh_1.png" alt="VideoMatting screenshot 1">
+      <img class="landscape" src="ss_en_2.png" data-en-src="ss_en_2.png" data-zh-src="ss_zh_2.png" alt="VideoMatting screenshot 2">
+      <img class="landscape" src="ss_en_3.png" data-en-src="ss_en_3.png" data-zh-src="ss_zh_3.png" alt="VideoMatting screenshot 3">
+      <img class="landscape" src="ss_en_4.png" data-en-src="ss_en_4.png" data-zh-src="ss_zh_4.png" alt="VideoMatting screenshot 4">
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="grid-2">
+      <div class="card">
+        <h2 id="privacy" data-en="Privacy" data-zh="隐私"></h2>
+        <p class="text2"
+           data-en="VideoMatting is designed with privacy in mind."
+           data-zh="视频抠图（VideoMatting）以隐私优先为设计原则。"></p>
+        <ul style="margin:12px 0 0 18px; color: var(--text2); line-height:1.7">
+          <li
+            data-en="No account required. Start editing right away."
+            data-zh="无需注册账号，打开即可处理视频。"></li>
+          <li
+            data-en="Videos are processed on your device whenever possible, and you stay in control of your media."
+            data-zh="尽可能在设备本地处理，你始终掌控自己的媒体内容。"></li>
+          <li
+            data-en="Exports are saved to your library or Files based on your choice."
+            data-zh="导出结果可按你的选择保存到相册或文件。"></li>
+          <li
+            data-en="Performance depends on device capability and video resolution."
+            data-zh="性能表现与设备能力及所选分辨率有关。"></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2 id="support" data-en="Support" data-zh="支持"></h2>
+        <p class="text2"
+           data-en="Questions or feedback about VideoMatting? Email us."
+           data-zh="关于 VideoMatting 的问题或建议，欢迎邮件联系。"></p>
+        <p><a href="mailto:freesysck@outlook.com">freesysck@outlook.com</a></p>
+        <p>
+          <a href="#" target="_blank" rel="noopener"
+             data-en="Marketing site" data-zh="营销网站"></a><br>
+          <a href="#" target="_blank" rel="noopener"
+             data-en="Privacy policy" data-zh="隐私政策"></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="grid-2">
+      <div>
+        <strong>
+          <span data-en="VideoMatting" data-zh="视频抠图"></span> ·
+          <span data-en="Video Background Remover" data-zh="AI 视频抠像换背景"></span>
+        </strong><br>
+        <span
+          data-en="© 2026 VideoMatting. All rights reserved."
+          data-zh="© 2026 VideoMatting。保留所有权利。"></span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+function swapLangImages(lang){
+  document.querySelectorAll("img[data-en-src]").forEach(img=>{
+    const src = img.getAttribute(lang==="zh" ? "data-zh-src" : "data-en-src");
+    if(src) img.setAttribute("src", src);
+  });
+}
+function setLang(lang){
+  document.querySelectorAll("[data-en]").forEach(el=>{
+    const text = el.getAttribute(lang === "zh" ? "data-zh" : "data-en");
+    if(text!==null){ el.textContent = text; }
+  });
+  const titleEl = document.getElementById("title-el");
+  if(titleEl){
+    const t = titleEl.getAttribute(lang === "zh" ? "data-zh" : "data-en");
+    if(t) document.title = t;
+  }
+  const metaDesc = document.getElementById("meta-desc");
+  if(metaDesc){
+    const d = metaDesc.getAttribute(lang === "zh" ? "data-zh" : "data-en");
+    if(d) metaDesc.setAttribute("content", d);
+  }
+  swapLangImages(lang);
+  document.getElementById("btn-en").classList.toggle("active", lang==="en");
+  document.getElementById("btn-zh").classList.toggle("active", lang==="zh");
+  localStorage.setItem("VideoMatting-lang", lang);
+}
+document.getElementById("btn-en").onclick=()=>setLang("en");
+document.getElementById("btn-zh").onclick=()=>setLang("zh");
+const saved = localStorage.getItem("VideoMatting-lang") || (navigator.language.startsWith("zh")?"zh":"en");
+setLang(saved);
+</script>
+
+</body>
+</html>
